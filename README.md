@@ -112,12 +112,76 @@ console.log(topScorers);
 
 `app.use(express.static('public'))` : public 이라는 디렉토리에 정적인 파일을 가져다 놓으면 사용자에게 서비스할 수 있다.
 
-정적 파일 처리 : 새로고침만 해주면 됨
+정적 파일 처리 : 새로고침만 해주면 됨.
 
 동적 파일 처리 : 노드를 껐다 켜야함.
 
+## 템플릿 엔진
 
+정적처리와 동적처리의 장점을 모두 갖고 있음.
 
+## 쿼리스트링
 
+`http://a.com/topic?id=1`
+
+`req.query.id` `req.query.name`
+
+쿼리 스트링으로 값을 받고 싶다면 `req.query.id`
+
+시멘틱 URL로 받고 싶다면 `req.params.id`
+
+``` js
+app.get('/topic/:id/:mode', (req, res)=>{
+    res.send(req.params.id + ',' + req.params.mode);
+})
+```
+
+## POST 방식
+
+사용자의 아이디와 패스워드 서버로 전송할 때
+
+정보의 양이 많아지면 URL 규격상 정보를 버리게 됨. 그럴 때는 POST 방식
+
+`body-parser` 사용해야함.
+
+`npm install body-parser`
+
+## Supervisor
+
+자바스크립트 코드를 바꾸면 자동으로 변경시켜줌.
+
+`npm install supervisor -g`
+
+`supervisor app.js`
+
+## mysql
+
+`npm install node-mysql --save`
+
+스켈레톤 코드
+
+``` js
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host: 'localhost',    // 호스트 주소
+    user: 'root',           // mysql user
+    password: '111111',       // mysql password
+    database: 'opentutorials'         // mysql 데이터베이스
+});
+connection.connect();
+
+connection.query('SELECT * FROM topic;',
+    function (error, results, fields) {
+        if (error) throw error;
+        for (var i = 0; i < results.length; i++) {
+            console.log(results[i].id + " " + results[i].title);
+        }
+    });
+
+connection.end();
+
+```
+
+`res.redirect('/topic/'+ result.id)` << 리다이렉션
 
 
