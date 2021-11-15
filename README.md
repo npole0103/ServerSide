@@ -184,4 +184,99 @@ connection.end();
 
 `res.redirect('/topic/'+ result.id)` << 리다이렉션
 
+``` js
+
+app.post(['topic/:id/edit'], (req, res)=>{
+    var title = req.body.title;
+    var description = req.body.description;
+    var author = req.body.author;
+
+    var id = req.params.id; //시멘틱 URL 값
+    var sql = 'UPDATE topic SET title=?, description=?, author=?, WHERE id=?';
+
+    conn.query(sql, [title, description, author, id], (err, results, fields)=>{
+        if(err)
+        {
+            console.log(err);
+        }
+        else
+        {
+            res.redirect('/topic/'+id);
+        }
+    })
+})
+
+```
+
+## HTTP
+
+Request : 웹 서버에게 정보 요청
+
+Response : Request에 따라서 Response 정보 제공
+
+Request/Response 헤더에 정보 담아서 날림.
+
+웹브라우저와 웹서버가 헤더를 통해서 정보를 주고 받기 때문에 우리 어플리케이션이 잘 구동되는 것.
+
+## Cookies
+
+로그인을 이전에 했어도 했는지 안했는지 알 수가 없음.
+
+그래서 쿠키라는 기능을 만듦. 쿠키 덕분에 로그인 한 상태가 계속 유지될 수 있는 것.
+
+Cookies의 Reqest Header와 Response 헤더가 있는데
+
+Response 헤더를 보면 Set-Cookie 라는 값이 있음.
+
+웹서버가 웹브라우저에게 응답해더를 보낼 때 Set-Cookie로 값을 전송함. 브라우저에 저장해놓음.
+
+또한 웹브라우저가 웹서버에게 요청 헤더를 보낼 때 Request Cookie 프로퍼티에 값을 보냄.
+
+쿠키 모듈 설치
+
+`npm install cookie-parser`
+
+``` js
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+```
+
+```js
+var express = require('express');
+var cookieParser = require('cookie-parser'); //쿠키 파서 모듈
+
+var app = express();
+app.use(cookieParser()); //쿠키 파서 미들웨어 등록
+
+app.get('/count', (req, res)=>{
+    res.cookie('count', 2); //웹서버에서 웹브라우저에 응답할 때 보낸다.
+    res.send('count : ' + req.cookies.count); //웹브라우저가 웹서버에게 전송한 쿠키값
+})
+
+app.listen(3003, ()=>{
+    console.log("Connected 3003 port!!");
+})
+```
+
+## 사용자의 정보가 웹 서버를 통해 사용자의 컴퓨터에 직접 저장되는 정보의 단위
+
+* 쿠키는 응답 헤더에 심어서 전송
+* 클라이언트가 자신이 가지고 있는 쿠키를 서버 측으로 전달했을 때, 서버는 쿠키를 읽을 수 있어야 한다.
+* 클라이언트가 현재 가지고 있는 쿠키를 서버가 읽을 때 `req.cookies.[cookie name]`
+* 쿠키를 저장하는 방법 `res.cookie('cookie name', 'cookie value', option);`
+  * maxAge: 쿠키의 만료 시간을 밀리초 단위로 설정
+  * expires: 쿠키의 만료 시간을 표준 시간 으로 설정
+  * path: 쿠키의 경로 (default: /)
+  * domain: 쿠키의 도메인 이름 (default: loaded)
+  * secure: HTTPS 프로토콜만 쿠키 사용 가능
+  * httpOnly: HTTP 프로토콜만 쿠키 사용 가능
+  * signed: 쿠키의 서명 여부를 결정
+* 쿠키의 값은 같은 주소값을 가지고 있는 사이트 내에서만 유요하다.
+* 웹브라우저가 쿠키값을 기억하고 있다가 다시 그 서버에 접속할 때 쿠키값을 준다.
+* 숫자 값을 전송해도 사실은 문자열 형태이다.
+
+
+
+
+
 
